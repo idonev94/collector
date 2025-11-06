@@ -1,0 +1,66 @@
+# F5 BIG-IP Collector Configuration Example
+# This configuration should be placed in the directory specified by ASSURANCE_CONFIG_DIR
+
+# Elasticsearch configuration for data storage
+elasticsearch:
+  node:
+    host: "elasticsearch.example.com:9200"
+    user: "{ASSURANCE_ELASTICSEARCH_USER}"
+    passwd: "{ASSURANCE_ELASTICSEARCH_PASSWD}"
+    use_ssl: true
+    verify_ssl: true
+    alert_index: "nms_einstein-alerts_"
+    keep_alive_index: "nms_einstein-keep_alive_"
+
+# Einstein alerting configuration
+einstein:
+  keepalive_timeout: 20  # minutes
+  clear_all: false  # set to true to clear all alerts (send UP events)
+  kafka:
+    bootstrap_servers:
+      - "kafka1.example.com:9093"
+      - "kafka2.example.com:9093"
+    topic: "einstein-alerts"
+    security_protocol: "SSL"
+    ssl_client_cert:
+      certfile: "/path/to/client.crt"
+      keyfile: "/path/to/client.key"
+    enabled: true
+    timeout: 10
+  node_mapping: []  # Optional: map node names to different org IDs
+    # - from_node_name: "old-name"
+    #   to_node_name: "new-name"
+    #   to_organisation_id: 12345
+
+# F5 BIG-IP devices to monitor
+devices:
+  - name: "f5-bigip-prod-01"  # Unique name for this F5 device
+    sla_code: "L08"  # SLA classification
+    einstein: true  # Enable Einstein alerting
+    node:
+      url: "https://f5-bigip-prod-01.example.com"  # F5 management URL
+      api_user: "{ASSURANCE_F5_USER}"  # F5 username
+      api_passwd: "{ASSURANCE_F5_PASSWD}"  # F5 password
+      # Alternative: use API token instead of user/passwd
+      # api_token:
+      #   name: "X-F5-Auth-Token"
+      #   value: "{ASSURANCE_F5_TOKEN}"
+      verify_ssl: true  # Set to false for self-signed certs
+      proxy: null  # Optional: "http://proxy.example.com:8080"
+      owner: "A1"  # Organization owner identifier
+
+  - name: "f5-bigip-prod-02"
+    sla_code: "L08"
+    einstein: true
+    node:
+      url: "https://f5-bigip-prod-02.example.com"
+      api_user: "{ASSURANCE_F5_USER}"
+      api_passwd: "{ASSURANCE_F5_PASSWD}"
+      verify_ssl: true
+      owner: "A1"
+
+# Data storage index prefix
+data_index: "nms_f5_bigip-devices_"
+
+# Customer lookup configuration
+uuid_required: true  # Require UUID for customer lookup
