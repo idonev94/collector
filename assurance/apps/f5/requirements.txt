@@ -1,0 +1,9 @@
+rich
+pyyaml
+pydantic
+aiohttp
+aiofiles
+elasticsearch7[async]
+dotenv
+kafka-python
+# F5 dependencies - using aiohttp for REST API calls (no need for f5-sdk)
